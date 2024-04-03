@@ -1,3 +1,5 @@
+import 'package:brainbox/screens/caixinha_home.dart';
+import 'package:brainbox/screens/myprofile.dart';
 import 'package:flutter/material.dart';
 import 'package:brainbox/screens/createbox.dart';
 
@@ -24,6 +26,7 @@ class _MyBoxState extends State<MyBox> {
             style: TextStyle(color: Colors.white),
           ),
         ),
+        drawer: MyDrawer(), // Adiciona o Drawer
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -231,6 +234,60 @@ class PostItAnnotation extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(annotation),
+      ),
+    );
+  }
+}
+
+class MyDrawer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: Color.fromRGBO(13, 71, 161, 1),
+            ),
+            child: Text(
+              'Menu',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+              ),
+            ),
+          ),
+          ListTile(
+            title: Text('Página Inicial'),
+            leading: Icon(Icons.home), // Adiciona o ícone de casa
+            onTap: () {
+              // Implemente a ação desejada para 'Página Inicial'
+            },
+          ),
+          ListTile(
+            title: Text('Minhas caixinhas'),
+            leading: Icon(Icons.archive), // Ícone de caixa aberta
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          caixinha_home())); // Implemente a ação desejada para 'Minhas caixinhas'
+            },
+          ),
+          ListTile(
+            title: Text('Meu perfil'),
+            leading: Icon(Icons.person), // Ícone de perfil de usuário
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          Profile())); // Implemente a ação desejada para 'Meu perfil'
+            },
+          ),
+        ],
       ),
     );
   }

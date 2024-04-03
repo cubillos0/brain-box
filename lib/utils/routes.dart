@@ -6,6 +6,7 @@ import 'package:brainbox/screens/home_screen.dart';
 import 'package:brainbox/screens/login.dart';
 import 'package:brainbox/screens/my_box.dart';
 import 'package:brainbox/screens/caixinha_home.dart';
+import 'package:brainbox/screens/myprofile.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
@@ -15,6 +16,7 @@ class Routes {
   static const String createbox = '/criar_caixinha';
   static const String mybox = '/my_box';
   static const String caixinhahome = '/caixinha_home';
+  static const String profile = '/myprofile';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -43,6 +45,9 @@ class Routes {
 
       case caixinhahome:
         return MaterialPageRoute(builder: (context) => caixinha_home());
+
+      case profile:
+        return MaterialPageRoute(builder: (context) => Profile());
 
       default:
         throw FormatException('Routes not found! Check routes again');
