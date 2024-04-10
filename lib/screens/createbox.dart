@@ -21,7 +21,7 @@ class _CreateboxState extends State<Createbox> {
             'De um nome para sua caixinha!',
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: Color.fromRGBO(13, 71, 161, 1) // Título adicionado
+          backgroundColor: Color(0xFF0D47A1) // Título adicionado
           ),
       body: Column(
         children: [

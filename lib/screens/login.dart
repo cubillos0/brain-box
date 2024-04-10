@@ -125,18 +125,18 @@ class Login extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Botão de Esqueceu a Senha
-                 GestureDetector(
-                onTap: () {
-                },
-                child: Text(
-                  'Esqueceu sua senha',
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Color.fromRGBO(13, 71, 161, 1), // Cor do texto ao ser pressionado
-                    decoration: TextDecoration.none,
+                  GestureDetector(
+                    onTap: () {},
+                    child: Text(
+                      'Esqueceu sua senha',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Color.fromRGBO(
+                            13, 71, 161, 1), // Cor do texto ao ser pressionado
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
                   ),
-                ),
-              ),
 
                   // Botão de Login
                   ElevatedButton(
@@ -147,7 +147,7 @@ class Login extends StatelessWidget {
                       minimumSize: Size(140, 60),
                     ),
                     onPressed: () {
-                      Navigator.of(context).pushNamed(Routes.createbox);
+                      Navigator.of(context).pushNamed(Routes.caixinhahome);
                     },
                     child: Text(
                       'Login',
