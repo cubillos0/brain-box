@@ -10,6 +10,8 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
+// Abaixo está a substituição da tela de Get Started por uma tela de carregamento simples
+
 class _HomeState extends State<Home> {
   @override
   void initState() {
@@ -23,7 +25,9 @@ class _HomeState extends State<Home> {
     Future.delayed(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => Login()), // Substitua LoginScreen() pela tela para a qual deseja navegar
+        MaterialPageRoute(
+            builder: (context) =>
+                Login()), // Substitua LoginScreen() pela tela para a qual deseja navegar
       );
     });
   }
@@ -59,7 +63,9 @@ class _HomeState extends State<Home> {
                 ),
               ),
               SizedBox(height: 30),
-              CircularProgressIndicator(color: Colors.white,), // Indicador de carregamento
+              CircularProgressIndicator(
+                color: Colors.white,
+              ), // Indicador de carregamento
             ],
           ),
         ),
