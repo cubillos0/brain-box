@@ -10,12 +10,14 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(13, 71, 161, 1),
+      backgroundColor: Color(0xFF0D47A1),
       body: Padding(
-        padding: const EdgeInsets.only(top: 230.0), // Adicione um espaço no topo
+        padding:
+            const EdgeInsets.only(top: 230.0), // Adicione um espaço no topo
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start, // Alinhe os filhos ao topo
+            mainAxisAlignment:
+                MainAxisAlignment.start, // Alinhe os filhos ao topo
             children: [
               Image.asset(
                 'assets/image/logo.png',
@@ -43,9 +45,10 @@ class Home extends StatelessWidget {
                   Navigator.of(context).pushNamed(Routes.login);
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Color.fromRGBO(13, 71, 161, 1), backgroundColor: Colors.white, shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25)
-                  ),
+                  foregroundColor: Color.fromRGBO(13, 71, 161, 1),
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25)),
                   elevation: 8,
                   minimumSize: Size(250, 60),
                 ),
