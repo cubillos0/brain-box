@@ -19,7 +19,8 @@ class Login extends StatelessWidget {
                 width: 150,
                 height: 150,
               ),
-              SizedBox(height: 20), // Espaçamento entre o logo e os campos de login
+              SizedBox(
+                  height: 20), // Espaçamento entre o logo e os campos de login
 
               // Campo de Login
               Padding(
@@ -122,7 +123,6 @@ class Login extends StatelessWidget {
               ),
               SizedBox(height: 35),
 
-              
               // Botão de Login
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -141,7 +141,9 @@ class Login extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 20), // Espaçamento entre o botão de Login e o texto "Inscrever-se"
+              SizedBox(
+                  height:
+                      20), // Espaçamento entre o botão de Login e o texto "Inscrever-se"
 
               // Texto "Inscrever-se"
               GestureDetector(
