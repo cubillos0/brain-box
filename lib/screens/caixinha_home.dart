@@ -1,91 +1,24 @@
-import 'package:brainbox/screens/myprofile.dart';
-import 'package:brainbox/utils/routes.dart';
 import 'package:flutter/material.dart';
 
-class caixinha_home extends StatefulWidget {
-  const caixinha_home({Key? key}) : super(key: key);
+class CaixinhaHome extends StatefulWidget {
+  const CaixinhaHome({Key? key}) : super(key: key);
 
   @override
-  CaixinhaHomeState createState() => CaixinhaHomeState();
+  _CaixinhaHomeState createState() => _CaixinhaHomeState();
 }
 
-class CaixinhaHomeState extends State<caixinha_home> {
+class _CaixinhaHomeState extends State<CaixinhaHome> {
   void _showMenu() {
     // Implemente o que acontecerá quando o menu for mostrado
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Home',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Color(0xFF0D47A1),
-        iconTheme: IconThemeData(
-            color: Colors
-                .white), // Define a cor do ícone do menu hamburguer como branco
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Color.fromRGBO(13, 71, 161, 1),
-              ),
-              child: Image.asset(
-                'assets/image/logo.png',
-                width: 100,
-                height: 100,
-              ),
-            ),
-            ListTile(
-              title: Text('Página Inicial'),
-              leading: Icon(Icons.home), // Adiciona o ícone de casa
-              onTap: () {
-                // Implemente a ação desejada para 'Página Inicial'
-              },
-            ),
-            ListTile(
-              title: Text('Minhas caixinhas'),
-              leading: Icon(Icons.archive), // Ícone de caixa aberta
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => caixinha_home(),
-                  ),
-                ); // Implemente a ação desejada para 'Minhas caixinhas'
-              },
-            ),
-            ListTile(
-              title: Text('Meu perfil'),
-              leading: Icon(Icons.person), // Ícone de perfil de usuário
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Profile(),
-                  ),
-                ); // Implemente a ação desejada para 'Meu perfil'
-              },
-            ),
-          ],
-        ),
-      ),
-      body: GridView.builder(
-        padding: EdgeInsets.all(20),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
-        itemCount: 6, // número de ícones de caixa que você deseja exibir
-        itemBuilder: (BuildContext context, int index) {
-          return GestureDetector(
+    List<Widget> buildGridItems() {
+      List<Widget> items = [];
+      for (int i = 0; i < 6; i++) {
+        items.add(
+          GestureDetector(
             onTap: () {
               // Aqui você pode adicionar a navegação para a página caixinha_home com o título adequado
               // Navigator.pushNamed(context, '/caixinha_home', arguments: 'Título da Caixa $index');
@@ -103,19 +36,77 @@ class CaixinhaHomeState extends State<caixinha_home> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Título da Caixa $index',
+                    'Título da Caixa $i',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16),
                   ),
                 ],
               ),
             ),
-          );
-        },
+          ),
+        );
+      }
+      return items;
+    }
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text(
+          'Home',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Color(0xFF0D47A1),
+        iconTheme: IconThemeData(
+          color: Colors.white,
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(13, 71, 161, 1),
+              ),
+              child: Image.asset(
+                'assets/image/logo.png',
+                width: 100,
+                height: 100,
+              ),
+            ),
+            ListTile(
+              title: Text('Minhas caixinhas'),
+              leading: Icon(Icons.archive),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CaixinhaHome(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Meu perfil'),
+              leading: Icon(Icons.person),
+              onTap: () {
+                // Navegue para a tela de perfil
+              },
+            ),
+          ],
+        ),
+      ),
+      body: GridView.count(
+        padding: EdgeInsets.all(20),
+        crossAxisCount: 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        children: buildGridItems(),
       ),
       floatingActionButton: InkWell(
         onTap: () {
-          Navigator.of(context).pushNamed(Routes.createbox);
+          // Implemente a ação desejada para o botão de adicionar
         },
         child: Container(
           padding: EdgeInsets.all(16),
@@ -132,4 +123,10 @@ class CaixinhaHomeState extends State<caixinha_home> {
       ),
     );
   }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: CaixinhaHome(),
+  ));
 }

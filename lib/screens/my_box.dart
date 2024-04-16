@@ -272,7 +272,7 @@ class MyDrawer extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          caixinha_home())); // Implemente a ação desejada para 'Minhas caixinhas'
+                          CaixinhaHome())); // Implemente a ação desejada para 'Minhas caixinhas'
             },
           ),
           ListTile(

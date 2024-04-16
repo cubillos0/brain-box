@@ -44,7 +44,7 @@ class Routes {
         );
 
       case caixinhahome:
-        return MaterialPageRoute(builder: (context) => caixinha_home());
+        return MaterialPageRoute(builder: (context) => CaixinhaHome());
 
       case profile:
         return MaterialPageRoute(builder: (context) => Profile());
