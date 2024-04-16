@@ -1,28 +1,51 @@
-import 'package:brainbox/utils/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:brainbox/screens/createbox.dart';
+import 'package:brainbox/utils/routes.dart';
 import 'package:brainbox/screens/login.dart';
 import 'package:brainbox/screens/home_screen.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
+
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+// Abaixo está a substituição da tela de Get Started por uma tela de carregamento simples
+
+class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    super.initState();
+    // Inicia a contagem regressiva para a navegação para outra tela
+    _navigateToNextScreen();
+  }
+
+  // Função para navegar para outra tela após 3 segundos
+  void _navigateToNextScreen() {
+    Future.delayed(Duration(seconds: 3), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                Login()), // Substitua LoginScreen() pela tela para a qual deseja navegar
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF0D47A1),
       body: Padding(
-        padding:
-            const EdgeInsets.only(top: 230.0), // Adicione um espaço no topo
+        padding: const EdgeInsets.all(20),
         child: Center(
           child: Column(
-            mainAxisAlignment:
-                MainAxisAlignment.start, // Alinhe os filhos ao topo
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
                 'assets/image/logo.png',
-                width: 250,
-                height: 250,
+                width: 200,
+                height: 200,
               ),
               Text(
                 'BrainBox',
@@ -40,20 +63,9 @@ class Home extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed(Routes.login);
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Color.fromRGBO(13, 71, 161, 1),
-                  backgroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25)),
-                  elevation: 8,
-                  minimumSize: Size(250, 60),
-                ),
-                child: Text('Começar', style: TextStyle(fontSize: 19)),
-              ),
+              CircularProgressIndicator(
+                color: Colors.white,
+              ), // Indicador de carregamento
             ],
           ),
         ),

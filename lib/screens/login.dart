@@ -1,6 +1,5 @@
-import 'package:brainbox/utils/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:brainbox/main.dart';
+import 'package:brainbox/utils/routes.dart';
 
 class Login extends StatelessWidget {
   const Login({Key? key});
@@ -25,12 +24,14 @@ class Login extends StatelessWidget {
 
               // Campo de Login
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 child: TextFormField(
                   decoration: InputDecoration(
                     label: Text(
                       'E-mail',
-                      style: TextStyle(color: Color.fromRGBO(13, 71, 161, 1)),
+                      style: TextStyle(
+                        color: Color.fromRGBO(13, 71, 161, 1),
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
@@ -62,23 +63,25 @@ class Login extends StatelessWidget {
                     ),
                     filled: true,
                     fillColor: Colors.white,
-                    contentPadding:
-                        EdgeInsetsDirectional.fromSTEB(20, 24, 20, 24),
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 20,
+                    ),
                   ),
                   textAlign: TextAlign.start,
                 ),
               ),
-              SizedBox(
-                  height: 2), // Espaçamento entre os campos de login e senha
 
               // Campo de Senha
               Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 child: TextFormField(
                   decoration: InputDecoration(
                     label: Text(
                       'Senha',
-                      style: TextStyle(color: Color.fromRGBO(13, 71, 161, 1)),
+                      style: TextStyle(
+                        color: Color.fromRGBO(13, 71, 161, 1),
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
@@ -110,56 +113,39 @@ class Login extends StatelessWidget {
                     ),
                     filled: true,
                     fillColor: Colors.white,
-                    contentPadding:
-                        EdgeInsetsDirectional.fromSTEB(20, 24, 20, 24),
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 20,
+                    ),
                   ),
                   textAlign: TextAlign.start,
                 ),
               ),
-              SizedBox(
-                  height:
-                      24), // Espaçamento entre os campos de senha e o botão de login
+              SizedBox(height: 35),
 
               // Botão de Login
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Botão de Esqueceu a Senha
-                  GestureDetector(
-                    onTap: () {},
-                    child: Text(
-                      'Esqueceu sua senha',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Color.fromRGBO(
-                            13, 71, 161, 1), // Cor do texto ao ser pressionado
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color.fromRGBO(13, 71, 161, 1),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
                   ),
-
-                  // Botão de Login
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromRGBO(13, 71, 161, 1),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25)),
-                      minimumSize: Size(140, 60),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(Routes.caixinhahome);
-                    },
-                    child: Text(
-                      'Login',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
-                  ),
-                ],
+                  minimumSize: Size(220, 60),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushNamed(Routes.createbox);
+                },
+                child: Text(
+                  'Login',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
               ),
 
-              // Espaçamento entre o campo de senha e o texto "INSCREVER-SE"
-              SizedBox(height: 10),
-              // Texto "Inscrever-se" com GestureDetector
+              SizedBox(
+                  height:
+                      20), // Espaçamento entre o botão de Login e o texto "Inscrever-se"
+
+              // Texto "Inscrever-se"
               GestureDetector(
                 onTap: () {
                   Navigator.of(context).pushNamed(Routes.cadastro);
@@ -168,9 +154,20 @@ class Login extends StatelessWidget {
                   'Inscrever-se',
                   style: TextStyle(
                     fontSize: 18.0,
-                    color: Color.fromRGBO(
-                        13, 71, 161, 1), // Cor do texto ao ser pressionado
-                    decoration: TextDecoration.none,
+                    color: Color.fromRGBO(13, 71, 161, 1),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20), // Espaçamento entre os botões
+
+              // Botão de Esqueceu a Senha
+              GestureDetector(
+                onTap: () {},
+                child: Text(
+                  'Esqueceu sua senha',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Color.fromRGBO(13, 71, 161, 1),
                   ),
                 ),
               ),
