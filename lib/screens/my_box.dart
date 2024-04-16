@@ -21,6 +21,7 @@ class _MyBoxState extends State<MyBox> {
       home: Scaffold(
         appBar: AppBar(
           backgroundColor: Color.fromRGBO(13, 71, 161, 1),
+          iconTheme: IconThemeData(color: Colors.white),
           title: Text(
             widget.controller?.text ?? 'MINHA CAIXINHA',
             style: TextStyle(color: Colors.white),
@@ -250,12 +251,10 @@ class MyDrawer extends StatelessWidget {
             decoration: BoxDecoration(
               color: Color.fromRGBO(13, 71, 161, 1),
             ),
-            child: Text(
-              'Menu',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
+            child: Image.asset(
+              'assets/image/logo.png',
+              width: 100,
+              height: 100,
             ),
           ),
           ListTile(
