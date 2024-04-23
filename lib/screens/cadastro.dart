@@ -1,9 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:brainbox/screens/login.dart';
 import 'package:brainbox/utils/routes.dart';
 
 class Cadastro extends StatelessWidget {
-  const Cadastro({super.key});
+  Cadastro({Key? key}) : super(key: key);
+
+  // Fora do método build()
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  // Função para criar uma nova conta de usuário
+  Future<void> _signUp(
+      BuildContext context, String email, String password) async {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Se o cadastro for bem-sucedido, você pode fazer alguma ação aqui, como navegar para a próxima tela
+      // Navigator.of(context).pushNamed(Routes.caixinhahome);
+    } catch (e) {
+      // Se ocorrer um erro durante o cadastro, você pode tratar aqui
+      print("Erro durante o cadastro: $e");
+      // Por exemplo, você pode exibir uma mensagem de erro para o usuário
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Erro durante o cadastro. Verifique suas informações."),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +80,8 @@ class Cadastro extends StatelessWidget {
                   padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                   child: Container(
                     child: TextField(
+                      controller: _emailController,
                       style: TextStyle(fontSize: 18),
-                      obscureText: true,
                       decoration: InputDecoration(
                         labelText: 'E-mail',
                         border: OutlineInputBorder(
@@ -80,6 +107,8 @@ class Cadastro extends StatelessWidget {
                   padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                   child: Container(
                     child: TextField(
+                      controller: _passwordController,
+                      obscureText: true,
                       decoration: InputDecoration(
                         labelText: 'Senha',
                         border: OutlineInputBorder(
@@ -137,8 +166,9 @@ class Cadastro extends StatelessWidget {
                     minimumSize: Size(250, 60),
                   ),
                   onPressed: () {
-                    Navigator.of(context).pushNamed(Routes.caixinhahome);
-                    // Adicione aqui a lógica para processar o login
+                    // Chamando a função de cadastro com os valores dos campos de email e senha
+                    _signUp(context, _emailController.text,
+                        _passwordController.text);
                   },
                   child: Text('Cadastrar',
                       style: TextStyle(fontSize: 18, color: Colors.white)),
