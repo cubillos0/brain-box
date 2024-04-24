@@ -1,8 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:brainbox/utils/routes.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Login extends StatelessWidget {
-  const Login({Key? key});
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> _login(BuildContext context) async {
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      // Se o login for bem-sucedido, navegue para a próxima tela
+      Navigator.of(context).pushNamed(Routes.caixinhahome);
+    } catch (e) {
+      // Se ocorrer um erro, mostre uma mensagem de erro ao usuário
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Erro ao fazer login: $e"),
+        ),
+      );
+    }
+  }
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +155,7 @@ class Login extends StatelessWidget {
                   minimumSize: Size(220, 60),
                 ),
                 onPressed: () {
-                  Navigator.of(context).pushNamed(Routes.caixinhahome);
+                  _login(context);
                 },
                 child: Text(
                   'Login',

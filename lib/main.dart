@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:brainbox/screens/createbox.dart';
 import 'package:brainbox/screens/login.dart';
 import 'package:brainbox/screens/home_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
