@@ -90,7 +90,13 @@ class Login extends StatelessWidget {
                     labelStyle: TextStyle(
                       color: Color.fromRGBO(13, 71, 161, 1),
                     ),
-                    // Restante do código...
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 0.5,
+                      ),
+                      borderRadius: BorderRadius.circular(25),
+                    ),
                   ),
                 ),
               ),
