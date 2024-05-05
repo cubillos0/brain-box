@@ -1,36 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:brainbox/utils/routes.dart';
+import 'package:http/http.dart' as http;
 
 class Login extends StatelessWidget {
-  const Login({Key? key});
-
-  Future<void> _login(
-      BuildContext context, String email, String password) async {
+  Future<void> _login(BuildContext context) async {
     try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
+      var response = await http.post(
+        Uri.parse(
+            'http://localhost/api/brainbox.php'), // Substitua pela URL da sua API de login
+        body: {
+          'email': emailController.text,
+          'senha': senhaController.text,
+        },
       );
 
-      // Se o login for bem-sucedido, navegue para a próxima tela
-      Navigator.of(context).pushNamed(Routes.caixinhahome);
+      if (response.statusCode == 200) {
+        // Se o login for bem-sucedido (código 200), navegue para a próxima tela
+        Navigator.of(context).pushNamed(Routes.caixinhahome);
+      } else {
+        // Se ocorrer um erro, mostre uma mensagem de erro ao usuário
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Erro ao fazer login: ${response.body}"),
+          ),
+        );
+      }
     } catch (e) {
-      // Se ocorrer um erro durante o login, você pode tratar aqui
-      print("Erro durante o login: $e");
-      // Por exemplo, você pode exibir uma mensagem de erro para o usuário
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Erro durante o login. Verifique suas credenciais."),
-      ));
+      // Se ocorrer um erro na requisição, mostre uma mensagem de erro ao usuário
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Erro ao fazer login: $e"),
+        ),
+      );
     }
   }
 
+  TextEditingController emailController = TextEditingController();
+  TextEditingController senhaController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    String email = '';
-    String password = '';
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -45,70 +54,70 @@ class Login extends StatelessWidget {
                 height: 150,
               ),
               SizedBox(height: 20),
+
+              // Campo de Login
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: TextFormField(
-                  onChanged: (value) => email = value,
+                  controller: emailController,
                   decoration: InputDecoration(
+                    hintText: 'nome@email.com',
                     labelText: 'E-mail',
-                    labelStyle:
-                        TextStyle(color: Color.fromRGBO(13, 71, 161, 1)),
+                    labelStyle: TextStyle(
+                      color: Color.fromRGBO(13, 71, 161, 1),
+                    ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black, width: 0.5),
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 0.5,
+                      ),
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black, width: 1),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                    // Restante do código...
                   ),
-                  textAlign: TextAlign.start,
                 ),
               ),
+
+              // Campo de Senha
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: TextFormField(
-                  onChanged: (value) => password = value,
+                  controller: senhaController,
                   obscureText: true,
                   decoration: InputDecoration(
+                    hintText: 'Digite sua senha',
                     labelText: 'Senha',
-                    labelStyle:
-                        TextStyle(color: Color.fromRGBO(13, 71, 161, 1)),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black, width: 0.5),
-                      borderRadius: BorderRadius.circular(25),
+                    labelStyle: TextStyle(
+                      color: Color.fromRGBO(13, 71, 161, 1),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black, width: 1),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                    // Restante do código...
                   ),
-                  textAlign: TextAlign.start,
                 ),
               ),
-              SizedBox(height: 35),
+
+              // Botão de Login
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color.fromRGBO(13, 71, 161, 1),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25)),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
                   minimumSize: Size(220, 60),
                 ),
-                onPressed: () => _login(context, email, password),
+                onPressed: () {
+                  _login(context);
+                },
                 child: Text(
                   'Login',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
-              SizedBox(height: 20),
+
+              SizedBox(
+                  height:
+                      20), // Espaçamento entre o botão de Login e o texto "Inscrever-se"
+
+              // Texto "Inscrever-se"
               GestureDetector(
                 onTap: () {
                   Navigator.of(context).pushNamed(Routes.cadastro);
@@ -116,16 +125,9 @@ class Login extends StatelessWidget {
                 child: Text(
                   'Inscrever-se',
                   style: TextStyle(
-                      fontSize: 18.0, color: Color.fromRGBO(13, 71, 161, 1)),
-                ),
-              ),
-              SizedBox(height: 20),
-              GestureDetector(
-                onTap: () {},
-                child: Text(
-                  'Esqueceu sua senha',
-                  style: TextStyle(
-                      fontSize: 15, color: Color.fromRGBO(13, 71, 161, 1)),
+                    fontSize: 18.0,
+                    color: Color.fromRGBO(13, 71, 161, 1),
+                  ),
                 ),
               ),
             ],

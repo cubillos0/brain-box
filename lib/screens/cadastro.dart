@@ -1,36 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:brainbox/screens/login.dart';
+import 'package:http/http.dart' as http;
 import 'package:brainbox/utils/routes.dart';
 
 class Cadastro extends StatelessWidget {
-  Cadastro({Key? key}) : super(key: key);
-
-  // Fora do método build()
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  // Função para criar uma nova conta de usuário
-  Future<void> _signUp(
-      BuildContext context, String email, String password) async {
+  Future<void> _cadastrar(BuildContext context) async {
     try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
+      var response = await http.post(
+        Uri.parse(
+            'http://localhost/api/brainbox.php'), // Substitua pela URL da sua API de cadastro
+        body: {
+          'nome': nomeController.text,
+          'email': emailController.text,
+          'senha': senhaController.text,
+          'confsenha': confsenhaController.text,
+        },
       );
 
-      // Se o cadastro for bem-sucedido, você pode fazer alguma ação aqui, como navegar para a próxima tela
-      // Navigator.of(context).pushNamed(Routes.caixinhahome);
+      if (response.statusCode == 200) {
+        // Se o cadastro for bem-sucedido (código 200), navegue para a próxima tela
+        Navigator.of(context).pushNamed(Routes.caixinhahome);
+      } else {
+        // Se ocorrer um erro, mostre uma mensagem de erro ao usuário
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Erro ao cadastrar: ${response.body}"),
+          ),
+        );
+      }
     } catch (e) {
-      // Se ocorrer um erro durante o cadastro, você pode tratar aqui
-      print("Erro durante o cadastro: $e");
-      // Por exemplo, você pode exibir uma mensagem de erro para o usuário
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Erro durante o cadastro. Verifique suas informações."),
-      ));
+      // Se ocorrer um erro na requisição, mostre uma mensagem de erro ao usuário
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Erro ao cadastrar: $e"),
+        ),
+      );
     }
   }
+
+  TextEditingController nomeController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController senhaController = TextEditingController();
+  TextEditingController confsenhaController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +60,15 @@ class Cadastro extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
 
-                // Campo de Nome Completo
+                // Campo de Nome
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                   child: Container(
                     child: TextField(
+                      controller: nomeController,
                       decoration: InputDecoration(
-                        labelText: 'Nome Completo',
+                        hintText: 'Digite seu nome',
+                        labelText: 'Nome',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25.0),
                         ),
@@ -80,8 +92,9 @@ class Cadastro extends StatelessWidget {
                   padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                   child: Container(
                     child: TextField(
-                      controller: _emailController,
-                      style: TextStyle(fontSize: 18),
+                      controller: emailController,
+                      style:
+                          TextStyle(fontSize: 18), // Tamanho da fonte aumentado
                       decoration: InputDecoration(
                         labelText: 'E-mail',
                         border: OutlineInputBorder(
@@ -107,8 +120,8 @@ class Cadastro extends StatelessWidget {
                   padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                   child: Container(
                     child: TextField(
-                      controller: _passwordController,
-                      obscureText: true,
+                      controller: senhaController,
+                      obscureText: true, // Senha oculta
                       decoration: InputDecoration(
                         labelText: 'Senha',
                         border: OutlineInputBorder(
@@ -134,8 +147,8 @@ class Cadastro extends StatelessWidget {
                   padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                   child: Container(
                     child: TextField(
-                      style: TextStyle(fontSize: 18),
-                      obscureText: true,
+                      controller: confsenhaController,
+                      obscureText: true, // Senha oculta
                       decoration: InputDecoration(
                         labelText: 'Confirmar Senha',
                         border: OutlineInputBorder(
@@ -156,7 +169,7 @@ class Cadastro extends StatelessWidget {
                 ),
                 SizedBox(height: 24),
 
-                // Botão de Login
+                // Botão de Cadastro
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromRGBO(13, 71, 161, 1),
@@ -166,12 +179,12 @@ class Cadastro extends StatelessWidget {
                     minimumSize: Size(250, 60),
                   ),
                   onPressed: () {
-                    // Chamando a função de cadastro com os valores dos campos de email e senha
-                    _signUp(context, _emailController.text,
-                        _passwordController.text);
+                    _cadastrar(context);
                   },
-                  child: Text('Cadastrar',
-                      style: TextStyle(fontSize: 18, color: Colors.white)),
+                  child: Text(
+                    'Cadastrar',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
                 ),
 
                 // Espaçamento entre o botão de login e o texto "Inscrever-se"
