@@ -34,17 +34,21 @@ class Routes {
         return MaterialPageRoute(builder: (context) => Cadastro());
 
       case createbox:
-        return MaterialPageRoute(builder: (context) => Createbox());
+  return MaterialPageRoute(builder: (context) => CreateBox());
+
+  
+
 
       case mybox:
-        final TextEditingController? controller =
-            settings.arguments as TextEditingController?;
-        return MaterialPageRoute(
-          builder: (_) => MyBox(controller: controller),
-        );
+  final args = settings.arguments as Map<String, dynamic>;
+  final TextEditingController? controller = args['controller'] as TextEditingController?;
+  final String boxName = args['boxName'] as String;
+  return MaterialPageRoute(
+    builder: (_) => MyBox(controller: controller, boxName: boxName),
+  );
 
       case caixinhahome:
-        return MaterialPageRoute(builder: (context) => caixinha_home());
+        return MaterialPageRoute(builder: (context) => CaixinhaHome());
 
       case profile:
         return MaterialPageRoute(builder: (context) => Profile());

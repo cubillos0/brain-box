@@ -1,15 +1,14 @@
-import 'package:brainbox/screens/my_box.dart';
 import 'package:brainbox/utils/routes.dart';
 import 'package:flutter/material.dart';
 
-class Createbox extends StatefulWidget {
-  const Createbox({Key? key}) : super(key: key);
+class CreateBox extends StatefulWidget {
+  const CreateBox({Key? key}) : super(key: key);
 
   @override
-  _CreateboxState createState() => _CreateboxState();
+  _CreateBoxState createState() => _CreateBoxState();
 }
 
-class _CreateboxState extends State<Createbox> {
+class _CreateBoxState extends State<CreateBox> {
   final TextEditingController _controller = TextEditingController();
 
   @override
@@ -17,12 +16,12 @@ class _CreateboxState extends State<Createbox> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-          title: Text(
-            'De um nome para sua caixinha!',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Color(0xFF0D47A1) // Título adicionado
-          ),
+        title: Text(
+          'De um nome para sua caixinha!',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Color(0xFF0D47A1),
+      ),
       body: Column(
         children: [
           Padding(
@@ -30,7 +29,7 @@ class _CreateboxState extends State<Createbox> {
             child: TextField(
               controller: _controller,
               decoration: InputDecoration(
-                labelText: 'Crie sua caixinha', // Texto do campo de entrada
+                labelText: 'Crie sua caixinha',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -39,12 +38,14 @@ class _CreateboxState extends State<Createbox> {
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color.fromRGBO(13, 71, 161, 1),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25)),
+                borderRadius: BorderRadius.circular(25),
+              ),
               minimumSize: Size(100, 48),
             ),
             onPressed: () {
+              String boxName = _controller.text;
               Navigator.of(context)
-                  .pushNamed(Routes.mybox, arguments: _controller);
+                  .pushNamed(Routes.caixinhahome, arguments: boxName);
             },
             child: Text(
               'Criar',

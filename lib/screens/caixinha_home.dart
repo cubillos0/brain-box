@@ -1,18 +1,70 @@
-import 'package:brainbox/screens/myprofile.dart';
+import 'package:brainbox/screens/createbox.dart';
 import 'package:brainbox/utils/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:brainbox/screens/myprofile.dart';
+import 'package:brainbox/screens/my_box.dart';
 
-class caixinha_home extends StatefulWidget {
-  const caixinha_home({Key? key}) : super(key: key);
+class MyDrawer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: Color.fromRGBO(13, 71, 161, 1),
+            ),
+            child: Image.asset(
+              'assets/image/logo.png',
+              width: 100,
+              height: 100,
+            ),
+          ),
+          ListTile(
+            title: Text('Página Inicial'),
+            leading: Icon(Icons.home), // Adiciona o ícone de casa
+            onTap: () {
+              // Implemente a ação desejada para 'Página Inicial'
+            },
+          ),
+          ListTile(
+            title: Text('Minhas caixinhas'),
+            leading: Icon(Icons.archive), // Ícone de caixa aberta
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          CaixinhaHome())); // Implemente a ação desejada para 'Minhas caixinhas'
+            },
+          ),
+          ListTile(
+            title: Text('Meu perfil'),
+            leading: Icon(Icons.person), // Ícone de perfil de usuário
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          Profile())); // Implemente a ação desejada para 'Meu perfil'
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CaixinhaHome extends StatefulWidget {
+  const CaixinhaHome({Key? key}) : super(key: key);
 
   @override
   CaixinhaHomeState createState() => CaixinhaHomeState();
 }
 
-class CaixinhaHomeState extends State<caixinha_home> {
-  void _showMenu() {
-    // Implemente o que acontecerá quando o menu for mostrado
-  }
+class CaixinhaHomeState extends State<CaixinhaHome> {
+  List<String> boxNames = []; // Lista para armazenar os nomes das caixinhas
 
   @override
   Widget build(BuildContext context) {
@@ -20,62 +72,15 @@ class CaixinhaHomeState extends State<caixinha_home> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
-          'Home',
+          'Minhas caixinhas',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Color(0xFF0D47A1),
         iconTheme: IconThemeData(
-            color: Colors
-                .white), // Define a cor do ícone do menu hamburguer como branco
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Color.fromRGBO(13, 71, 161, 1),
-              ),
-              child: Image.asset(
-                'assets/image/logo.png',
-                width: 100,
-                height: 100,
-              ),
-            ),
-            ListTile(
-              title: Text('Página Inicial'),
-              leading: Icon(Icons.home), // Adiciona o ícone de casa
-              onTap: () {
-                // Implemente a ação desejada para 'Página Inicial'
-              },
-            ),
-            ListTile(
-              title: Text('Minhas caixinhas'),
-              leading: Icon(Icons.archive), // Ícone de caixa aberta
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => caixinha_home(),
-                  ),
-                ); // Implemente a ação desejada para 'Minhas caixinhas'
-              },
-            ),
-            ListTile(
-              title: Text('Meu perfil'),
-              leading: Icon(Icons.person), // Ícone de perfil de usuário
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Profile(),
-                  ),
-                ); // Implemente a ação desejada para 'Meu perfil'
-              },
-            ),
-          ],
+          color: Colors.white,
         ),
       ),
+      drawer: MyDrawer(), // Adiciona o Drawer
       body: GridView.builder(
         padding: EdgeInsets.all(20),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -83,12 +88,13 @@ class CaixinhaHomeState extends State<caixinha_home> {
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
         ),
-        itemCount: 6, // número de ícones de caixa que você deseja exibir
+        itemCount:
+            boxNames.length, // Use o tamanho da lista de nomes das caixinhas
         itemBuilder: (BuildContext context, int index) {
           return GestureDetector(
             onTap: () {
-              // Aqui você pode adicionar a navegação para a página caixinha_home com o título adequado
-              // Navigator.pushNamed(context, '/caixinha_home', arguments: 'Título da Caixa $index');
+              String boxName = boxNames[index]; // Obtém o nome da caixinha
+              Navigator.pushNamed(context, Routes.mybox, arguments: boxName);
             },
             child: Card(
               color: Colors.white,
@@ -101,9 +107,9 @@ class CaixinhaHomeState extends State<caixinha_home> {
                     width: 100,
                     height: 100,
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10),
                   Text(
-                    'Título da Caixa $index',
+                    boxNames[index], // Exibe o nome da caixinha
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16),
                   ),
