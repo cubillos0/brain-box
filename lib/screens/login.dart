@@ -4,21 +4,36 @@ import 'package:http/http.dart' as http;
 
 class Login extends StatelessWidget {
   Future<void> _login(BuildContext context) async {
+    // Dados do login
+    String email = emailController.text;
+    String senha = senhaController.text;
+
     try {
+      // Faz a requisição para a API de login
       var response = await http.post(
         Uri.parse(
             'http://localhost/api/brainbox.php'), // Substitua pela URL da sua API de login
         body: {
-          'email': emailController.text,
-          'senha': senhaController.text,
+          'email': email,
+          'senha': senha,
         },
       );
 
       if (response.statusCode == 200) {
-        // Se o login for bem-sucedido (código 200), navegue para a próxima tela
-        Navigator.of(context).pushNamed(Routes.caixinhahome);
+        // Verifica se a resposta da API indica sucesso no login
+        if (response.body == 'Login realizado com sucesso!') {
+          // Se o login for bem-sucedido, navegue para a próxima tela
+          Navigator.of(context).pushNamed(Routes.caixinhahome);
+        } else {
+          // Se as credenciais estiverem incorretas, exiba uma mensagem de erro ao usuário
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("E-mail ou senha incorretos."),
+            ),
+          );
+        }
       } else {
-        // Se ocorrer um erro, mostre uma mensagem de erro ao usuário
+        // Se ocorrer um erro na resposta da API, exiba uma mensagem de erro genérica ao usuário
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Erro ao fazer login: ${response.body}"),
@@ -26,7 +41,7 @@ class Login extends StatelessWidget {
         );
       }
     } catch (e) {
-      // Se ocorrer um erro na requisição, mostre uma mensagem de erro ao usuário
+      // Se ocorrer um erro na requisição, exiba uma mensagem de erro ao usuário
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Erro ao fazer login: $e"),
@@ -111,7 +126,19 @@ class Login extends StatelessWidget {
                   minimumSize: Size(220, 60),
                 ),
                 onPressed: () {
-                  _login(context);
+                  // Verifica se o e-mail e a senha estão preenchidos antes de fazer o login
+                  if (emailController.text.isNotEmpty &&
+                      senhaController.text.isNotEmpty) {
+                    _login(
+                        context); // Chama a função de login apenas se os campos estiverem preenchidos
+                  } else {
+                    // Se os campos estiverem vazios, exibe uma mensagem ao usuário
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Preencha o e-mail e a senha."),
+                      ),
+                    );
+                  }
                 },
                 child: Text(
                   'Login',
