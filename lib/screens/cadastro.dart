@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:brainbox/screens/login.dart';
+import 'package:http/http.dart' as http;
 import 'package:brainbox/utils/routes.dart';
+
 
 class Cadastro extends StatelessWidget {
   TextEditingController nomeController = TextEditingController();
@@ -85,8 +86,8 @@ class Cadastro extends StatelessWidget {
                             borderRadius: BorderRadius.circular(25.0),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromRGBO(13, 71, 161, 1)),
+                            borderSide:
+                                BorderSide(color: Color.fromRGBO(13, 71, 161, 1)),
                             borderRadius: BorderRadius.circular(25.0),
                           ),
                           enabledBorder: OutlineInputBorder(
@@ -105,16 +106,16 @@ class Cadastro extends StatelessWidget {
                     child: Container(
                       child: TextField(
                         controller: emailController,
-                        style: TextStyle(
-                            fontSize: 18), // Tamanho da fonte aumentado
+                        style:
+                            TextStyle(fontSize: 18), // Tamanho da fonte aumentado
                         decoration: InputDecoration(
                           labelText: 'E-mail',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25.0),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromRGBO(13, 71, 161, 1)),
+                            borderSide:
+                                BorderSide(color: Color.fromRGBO(13, 71, 161, 1)),
                             borderRadius: BorderRadius.circular(25.0),
                           ),
                           enabledBorder: OutlineInputBorder(
@@ -140,8 +141,8 @@ class Cadastro extends StatelessWidget {
                             borderRadius: BorderRadius.circular(25.0),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromRGBO(13, 71, 161, 1)),
+                            borderSide:
+                                BorderSide(color: Color.fromRGBO(13, 71, 161, 1)),
                             borderRadius: BorderRadius.circular(25.0),
                           ),
                           enabledBorder: OutlineInputBorder(
@@ -167,8 +168,8 @@ class Cadastro extends StatelessWidget {
                             borderRadius: BorderRadius.circular(25.0),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromRGBO(13, 71, 161, 1)),
+                            borderSide:
+                                BorderSide(color: Color.fromRGBO(13, 71, 161, 1)),
                             borderRadius: BorderRadius.circular(25.0),
                           ),
                           enabledBorder: OutlineInputBorder(
