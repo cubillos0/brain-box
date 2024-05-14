@@ -1,42 +1,30 @@
 <?php
 header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
-// Verifica se a requisição é do tipo POST
+require 'config.php';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Recebe os dados enviados pelo aplicativo Flutter
-    $email = $_POST['email'];
-    $senha = $_POST['senha'];
+    $email = $_POST['email'] ?? '';
+    $senha = $_POST['senha'] ?? '';
 
-    // Conecta ao banco de dados (substitua os valores conforme a configuração do seu banco)
-    $servername = "localhost"; // Endereço do servidor MySQL
-    $username = "root"; // Nome de usuário do MySQL
-    $password = ""; // Senha do MySQL
-    $dbname = "brainbox"; // Nome do banco de dados
-
-    // Cria a conexão
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    // Verifica a conexão
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
+    if (empty($email) || empty($senha)) {
+        echo json_encode(['status' => 'error', 'message' => 'Email ou senha não fornecidos']);
+        exit;
     }
 
-    // Prepara e executa a query SQL para verificar se o e-mail e a senha existem na tabela
-    $sql = "SELECT * FROM cadastro WHERE email='$email' AND senha='$senha'";
-    $result = $conn->query($sql);
+    $sql = "SELECT * FROM cadastro WHERE email = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$email]);
+    $user = $stmt->fetch();
 
-    if ($result->num_rows > 0) {
-        // Se encontrou um registro correspondente, retorna uma mensagem de sucesso para o aplicativo Flutter
-        echo "Login realizado com sucesso!";
+    if ($user && $user['senha'] === $senha) {
+        echo json_encode(['status' => 'success', 'message' => 'Login realizado com sucesso!']);
     } else {
-        // Se não encontrou nenhum registro correspondente, retorna uma mensagem de erro para o aplicativo Flutter
-        echo "E-mail ou senha incorretos.";
+        echo json_encode(['status' => 'error', 'message' => 'E-mail ou senha incorretos.']);
     }
-
-    // Fecha a conexão com o banco de dados
-    $conn->close();
 } else {
-    // Retorna uma mensagem de erro se a requisição não for do tipo POST
-    echo "Método não permitido. Esta API aceita apenas requisições POST.";
+    echo json_encode(['status' => 'error', 'message' => 'Método de requisição inválido']);
 }
 ?>

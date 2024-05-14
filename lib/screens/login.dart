@@ -1,8 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:brainbox/utils/routes.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Login extends StatelessWidget {
-  const Login({Key? key});
+  Future<void> _login(BuildContext context) async {
+    // Dados do login
+    String email = emailController.text;
+    String senha = senhaController.text;
+
+    try {
+      print("Enviando requisição para a API...");
+      var response = await http.post(
+        Uri.parse(
+            'http://localhost/api/login.php'), // Substitua pelo endereço IP da sua máquina
+        body: {
+          'email': email,
+          'senha': senha,
+        },
+      );
+      print("Resposta recebida: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        var responseBody = jsonDecode(response.body);
+        if (responseBody['status'] == 'success') {
+          Navigator.of(context).pushNamed(Routes.caixinhahome);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(responseBody['message']),
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Erro ao fazer login: ${response.body}"),
+          ),
+        );
+      }
+    } catch (e) {
+      print("Erro ao fazer login: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Erro ao fazer login: $e"),
+        ),
+      );
+    }
+  }
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController senhaController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -19,19 +67,18 @@ class Login extends StatelessWidget {
                 width: 150,
                 height: 150,
               ),
-              SizedBox(
-                  height: 20), // Espaçamento entre o logo e os campos de login
+              SizedBox(height: 20),
 
               // Campo de Login
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: TextFormField(
+                  controller: emailController,
                   decoration: InputDecoration(
-                    label: Text(
-                      'E-mail',
-                      style: TextStyle(
-                        color: Color.fromRGBO(13, 71, 161, 1),
-                      ),
+                    hintText: 'nome@email.com',
+                    labelText: 'E-mail',
+                    labelStyle: TextStyle(
+                      color: Color.fromRGBO(13, 71, 161, 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
@@ -40,35 +87,8 @@ class Login extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 20,
-                    ),
+                    // Restante do código...
                   ),
-                  textAlign: TextAlign.start,
                 ),
               ),
 
@@ -76,12 +96,13 @@ class Login extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: TextFormField(
+                  controller: senhaController,
+                  obscureText: true,
                   decoration: InputDecoration(
-                    label: Text(
-                      'Senha',
-                      style: TextStyle(
-                        color: Color.fromRGBO(13, 71, 161, 1),
-                      ),
+                    hintText: 'Digite sua senha',
+                    labelText: 'Senha',
+                    labelStyle: TextStyle(
+                      color: Color.fromRGBO(13, 71, 161, 1),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
@@ -90,38 +111,9 @@ class Login extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.black,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 20,
-                    ),
                   ),
-                  textAlign: TextAlign.start,
                 ),
               ),
-              SizedBox(height: 35),
 
               // Botão de Login
               ElevatedButton(
@@ -133,7 +125,19 @@ class Login extends StatelessWidget {
                   minimumSize: Size(220, 60),
                 ),
                 onPressed: () {
-                  Navigator.of(context).pushNamed(Routes.caixinhahome);
+                  // Verifica se o e-mail e a senha estão preenchidos antes de fazer o login
+                  if (emailController.text.isNotEmpty &&
+                      senhaController.text.isNotEmpty) {
+                    _login(
+                        context); // Chama a função de login apenas se os campos estiverem preenchidos
+                  } else {
+                    // Se os campos estiverem vazios, exibe uma mensagem ao usuário
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Preencha o e-mail e a senha."),
+                      ),
+                    );
+                  }
                 },
                 child: Text(
                   'Login',
@@ -154,19 +158,6 @@ class Login extends StatelessWidget {
                   'Inscrever-se',
                   style: TextStyle(
                     fontSize: 18.0,
-                    color: Color.fromRGBO(13, 71, 161, 1),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20), // Espaçamento entre os botões
-
-              // Botão de Esqueceu a Senha
-              GestureDetector(
-                onTap: () {},
-                child: Text(
-                  'Esqueceu sua senha',
-                  style: TextStyle(
-                    fontSize: 15,
                     color: Color.fromRGBO(13, 71, 161, 1),
                   ),
                 ),
