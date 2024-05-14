@@ -1,6 +1,8 @@
 import 'package:brainbox/screens/my_box.dart';
 import 'package:brainbox/utils/routes.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class Createbox extends StatefulWidget {
   const Createbox({Key? key}) : super(key: key);
@@ -11,6 +13,46 @@ class Createbox extends StatefulWidget {
 
 class _CreateboxState extends State<Createbox> {
   final TextEditingController _controller = TextEditingController();
+
+  Future<void> _createBox(String name) async {
+    // URL da sua API para criar caixinhas
+    final String apiUrl = 'http://localhost/api/brainbox.php';
+
+    try {
+      // Faz a solicitação HTTP POST para a API
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        body: jsonEncode({'name': name}),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      // Verifica se a solicitação foi bem-sucedida
+      if (response.statusCode == 200) {
+        // Se a criação da caixinha foi bem-sucedida, exibe uma mensagem para o usuário
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Caixinha criada com sucesso!'),
+          ),
+        );
+      } else {
+        // Se a solicitação falhou, exibe uma mensagem de erro para o usuário
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Falha ao criar caixinha'),
+          ),
+        );
+      }
+    } catch (error) {
+      // Em caso de erro, exibe uma mensagem de erro genérica
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro: $error'),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +85,17 @@ class _CreateboxState extends State<Createbox> {
               minimumSize: Size(100, 48),
             ),
             onPressed: () {
-              Navigator.of(context)
-                  .pushNamed(Routes.mybox, arguments: _controller);
+              String name = _controller.text.trim();
+              if (name.isNotEmpty) {
+                // Chama a função para criar a caixinha
+                _createBox(name);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Por favor, insira um nome para a caixinha'),
+                  ),
+                );
+              }
             },
             child: Text(
               'Criar',

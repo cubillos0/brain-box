@@ -12,7 +12,7 @@ class Login extends StatelessWidget {
       // Faz a requisição para a API de login
       var response = await http.post(
         Uri.parse(
-            'http://localhost/api/brainbox.php'), // Substitua pela URL da sua API de login
+            'http://localhost/api/login.php'), // Substitua pela URL da sua API de login
         body: {
           'email': email,
           'senha': senha,

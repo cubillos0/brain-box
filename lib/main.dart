@@ -4,7 +4,6 @@ import 'package:brainbox/screens/createbox.dart';
 import 'package:brainbox/screens/login.dart';
 import 'package:brainbox/screens/home_screen.dart';
 
-
 void main() async {
   runApp(MyApp());
 }
