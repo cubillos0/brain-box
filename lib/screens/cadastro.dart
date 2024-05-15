@@ -3,22 +3,35 @@ import 'package:http/http.dart' as http;
 import 'package:brainbox/utils/routes.dart';
 
 class Cadastro extends StatelessWidget {
+  TextEditingController nomeController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController senhaController = TextEditingController();
+  TextEditingController confsenhaController = TextEditingController();
+
   Future<void> _cadastrar(BuildContext context) async {
     try {
       var response = await http.post(
         Uri.parse(
-            'http://localhost/api/brainbox.php'), // Substitua pela URL da sua API de cadastro
+            'http://localhost/api/register.php'), // Substitua pela URL da sua API de cadastro
         body: {
           'nome': nomeController.text,
           'email': emailController.text,
           'senha': senhaController.text,
-          'confsenha': confsenhaController.text,
         },
       );
 
       if (response.statusCode == 200) {
-        // Se o cadastro for bem-sucedido (código 200), navegue para a próxima tela
-        Navigator.of(context).pushNamed(Routes.caixinhahome);
+        // Se o cadastro for bem-sucedido, mostre uma mensagem de sucesso ao usuário
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Cadastrado com sucesso!"),
+          ),
+        );
+
+        // Redirecione para a página de login após um pequeno atraso
+        Future.delayed(Duration(seconds: 2), () {
+          Navigator.of(context).pushNamed(Routes.login);
+        });
       } else {
         // Se ocorrer um erro, mostre uma mensagem de erro ao usuário
         ScaffoldMessenger.of(context).showSnackBar(
@@ -29,18 +42,24 @@ class Cadastro extends StatelessWidget {
       }
     } catch (e) {
       // Se ocorrer um erro na requisição, mostre uma mensagem de erro ao usuário
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Erro ao cadastrar: $e"),
-        ),
-      );
+      if (e is http.ClientException) {
+        // Se a exceção for do tipo ClientException (erro de cliente), informe ao usuário sobre o problema de conexão
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text("Erro de conexão: Verifique sua conexão com a internet."),
+          ),
+        );
+      } else {
+        // Se a exceção não for do tipo ClientException, trate-a como antes
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Erro ao cadastrar: $e"),
+          ),
+        );
+      }
     }
   }
-
-  TextEditingController nomeController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController senhaController = TextEditingController();
-  TextEditingController confsenhaController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +198,8 @@ class Cadastro extends StatelessWidget {
                     minimumSize: Size(250, 60),
                   ),
                   onPressed: () {
-                    _cadastrar(context);
+                    _cadastrar(
+                        context); // Aqui está a chamada para o método _cadastrar
                   },
                   child: Text(
                     'Cadastrar',
