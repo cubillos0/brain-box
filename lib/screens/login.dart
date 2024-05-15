@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:brainbox/utils/routes.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Login extends StatelessWidget {
   Future<void> _login(BuildContext context) async {
@@ -9,31 +10,29 @@ class Login extends StatelessWidget {
     String senha = senhaController.text;
 
     try {
-      // Faz a requisição para a API de login
+      print("Enviando requisição para a API...");
       var response = await http.post(
         Uri.parse(
-            'http://localhost/api/login.php'), // Substitua pela URL da sua API de login
+            'http://localhost/api/login.php'), // Substitua pelo endereço IP da sua máquina
         body: {
           'email': email,
           'senha': senha,
         },
       );
+      print("Resposta recebida: ${response.statusCode}");
 
       if (response.statusCode == 200) {
-        // Verifica se a resposta da API indica sucesso no login
-        if (response.body == 'Login realizado com sucesso!') {
-          // Se o login for bem-sucedido, navegue para a próxima tela
+        var responseBody = jsonDecode(response.body);
+        if (responseBody['status'] == 'success') {
           Navigator.of(context).pushNamed(Routes.caixinhahome);
         } else {
-          // Se as credenciais estiverem incorretas, exiba uma mensagem de erro ao usuário
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text("E-mail ou senha incorretos."),
+              content: Text(responseBody['message']),
             ),
           );
         }
       } else {
-        // Se ocorrer um erro na resposta da API, exiba uma mensagem de erro genérica ao usuário
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Erro ao fazer login: ${response.body}"),
@@ -41,7 +40,7 @@ class Login extends StatelessWidget {
         );
       }
     } catch (e) {
-      // Se ocorrer um erro na requisição, exiba uma mensagem de erro ao usuário
+      print("Erro ao fazer login: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Erro ao fazer login: $e"),
