@@ -1,6 +1,8 @@
 import 'package:brainbox/screens/caixinha_home.dart';
 import 'package:brainbox/screens/myprofile.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:brainbox/screens/createbox.dart';
 
 class MyBox extends StatefulWidget {
@@ -14,6 +16,52 @@ class MyBox extends StatefulWidget {
 
 class _MyBoxState extends State<MyBox> {
   List<String> annotations = [];
+  String? caixinhaName;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCaixinhaName();
+  }
+
+  Future<void> sendDataToAPI(
+      String anotacao, String imagem, String documento, String links) async {
+    final response = await http.post(
+      Uri.parse('http://localhost/brain-box/api/mybox.php'),
+      body: {
+        'anotacao': anotacao,
+        'imagem': imagem,
+        'documento': documento,
+        'links': links,
+      },
+    );
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == 'success') {
+        // Faça o que for necessário após o envio bem-sucedido
+      } else {
+        // Lida com erros
+      }
+    } else {
+      // Lida com erros de conexão
+    }
+  }
+
+  Future<void> fetchCaixinhaName() async {
+    final response = await http.get(
+      Uri.parse('http://localhost/brain-box/api/mybox.php'),
+    );
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == 'success') {
+        setState(() {
+          caixinhaName = data['caixinha']['nome'];
+        });
+      }
+    } else {
+      throw Exception('Failed to load caixinha name');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +71,7 @@ class _MyBoxState extends State<MyBox> {
           backgroundColor: Color.fromRGBO(13, 71, 161, 1),
           iconTheme: IconThemeData(color: Colors.white),
           title: Text(
-            widget.controller?.text ?? 'MINHA CAIXINHA',
+            caixinhaName ?? 'MINHA CAIXINHA',
             style: TextStyle(color: Colors.white),
           ),
         ),
@@ -272,7 +320,7 @@ class MyDrawer extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          CaixinhaHome())); // Implemente a ação desejada para 'Minhas caixinhas'
+                          caixinha_home())); // Implemente a ação desejada para 'Minhas caixinhas'
             },
           ),
           ListTile(

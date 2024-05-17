@@ -1,6 +1,7 @@
 import 'package:brainbox/screens/my_box.dart';
 import 'package:brainbox/utils/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class Createbox extends StatefulWidget {
   const Createbox({Key? key}) : super(key: key);
@@ -42,9 +43,32 @@ class _CreateboxState extends State<Createbox> {
                   borderRadius: BorderRadius.circular(25)),
               minimumSize: Size(100, 48),
             ),
-            onPressed: () {
-              Navigator.of(context)
-                  .pushNamed(Routes.mybox, arguments: _controller);
+            onPressed: () async {
+              // Enviar o nome da caixinha para a API
+              final response = await http.post(
+                Uri.parse('http://localhost/brain-box/api/criar_caixinha.php'),
+                body: {'nome_caixinha': _controller.text},
+              );
+
+              // Verificar a resposta da API
+              if (response.statusCode == 200) {
+                // Se o cadastro for bem-sucedido, mostre uma mensagem de sucesso ao usuário
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Caixinha criada com sucesso!"),
+                  ),
+                );
+
+                // Redirecione para a página de login após um pequeno atraso
+                Future.delayed(Duration(seconds: 2), () {
+                  Navigator.of(context).pushNamed(Routes.mybox);
+                });
+              } else {
+                // Erro ao criar caixinha
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Erro ao criar caixinha')),
+                );
+              }
             },
             child: Text(
               'Criar',

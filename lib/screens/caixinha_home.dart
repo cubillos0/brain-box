@@ -1,54 +1,21 @@
+import 'package:brainbox/screens/myprofile.dart';
+import 'package:brainbox/utils/routes.dart';
 import 'package:flutter/material.dart';
 
-class CaixinhaHome extends StatefulWidget {
-  const CaixinhaHome({Key? key}) : super(key: key);
+class caixinha_home extends StatefulWidget {
+  const caixinha_home({Key? key}) : super(key: key);
 
   @override
-  _CaixinhaHomeState createState() => _CaixinhaHomeState();
+  CaixinhaHomeState createState() => CaixinhaHomeState();
 }
 
-class _CaixinhaHomeState extends State<CaixinhaHome> {
+class CaixinhaHomeState extends State<caixinha_home> {
   void _showMenu() {
     // Implemente o que acontecerá quando o menu for mostrado
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> buildGridItems() {
-      List<Widget> items = [];
-      for (int i = 0; i < 6; i++) {
-        items.add(
-          GestureDetector(
-            onTap: () {
-              // Aqui você pode adicionar a navegação para a página caixinha_home com o título adequado
-              // Navigator.pushNamed(context, '/caixinha_home', arguments: 'Título da Caixa $index');
-            },
-            child: Card(
-              color: Colors.white,
-              elevation: 0,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/image/box_icon.png',
-                    width: 100,
-                    height: 100,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Título da Caixa $i',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      }
-      return items;
-    }
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -58,8 +25,8 @@ class _CaixinhaHomeState extends State<CaixinhaHome> {
         ),
         backgroundColor: Color(0xFF0D47A1),
         iconTheme: IconThemeData(
-          color: Colors.white,
-        ),
+            color: Colors
+                .white), // Define a cor do ícone do menu hamburguer como branco
       ),
       drawer: Drawer(
         child: ListView(
@@ -76,37 +43,87 @@ class _CaixinhaHomeState extends State<CaixinhaHome> {
               ),
             ),
             ListTile(
+              title: Text('Página Inicial'),
+              leading: Icon(Icons.home), // Adiciona o ícone de casa
+              onTap: () {
+                // Implemente a ação desejada para 'Página Inicial'
+              },
+            ),
+            ListTile(
               title: Text('Minhas caixinhas'),
-              leading: Icon(Icons.archive),
+              leading: Icon(Icons.archive), // Ícone de caixa aberta
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CaixinhaHome(),
+                    builder: (context) => caixinha_home(),
                   ),
-                );
+                ); // Implemente a ação desejada para 'Minhas caixinhas'
               },
             ),
             ListTile(
               title: Text('Meu perfil'),
-              leading: Icon(Icons.person),
+              leading: Icon(Icons.person), // Ícone de perfil de usuário
               onTap: () {
-                // Navegue para a tela de perfil
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Profile(),
+                  ),
+                ); // Implemente a ação desejada para 'Meu perfil'
               },
             ),
           ],
         ),
       ),
-      body: GridView.count(
+      body: GridView.builder(
         padding: EdgeInsets.all(20),
-        crossAxisCount: 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        children: buildGridItems(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+        ),
+        itemCount: 1, // número de ícones de caixa que você deseja exibir
+        itemBuilder: (BuildContext context, int index) {
+          return GestureDetector(
+            onTap: () {
+              // Aqui você pode adicionar a navegação para a página caixinha_home com o título adequado
+              // Navigator.pushNamed(context, '/caixinha_home', arguments: 'Título da Caixa $index');
+            },
+            child: GestureDetector(
+  onTap: () {
+   Navigator.of(context).pushNamed(Routes.mybox);
+  },
+  child: Card(
+    color: Colors.white,
+    elevation: 0,
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/image/box_icon.png',
+            width: 100,
+            height: 100,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Título da Caixa $index',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16),
+          ),
+        ],
+      ),
+    ),
+  ),
+),
+          );
+        },
       ),
       floatingActionButton: InkWell(
         onTap: () {
-          // Implemente a ação desejada para o botão de adicionar
+          Navigator.of(context).pushNamed(Routes.createbox);
         },
         child: Container(
           padding: EdgeInsets.all(16),
