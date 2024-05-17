@@ -12,7 +12,11 @@ class Cadastro extends StatelessWidget {
     try {
       var response = await http.post(
         Uri.parse(
+<<<<<<< HEAD
             'http://localhost/brain-box/api/register.php'), 
+=======
+            'http://localhost/api/register.php'), // Substitua pela URL da sua API de cadastro
+>>>>>>> 8ba72141911d160350fcbf3a74d0d9f3cacce3fb
         body: {
           'nome': nomeController.text,
           'email': emailController.text,

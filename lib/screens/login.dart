@@ -13,7 +13,11 @@ class Login extends StatelessWidget {
       print("Enviando requisição para a API...");
       var response = await http.post(
         Uri.parse(
+<<<<<<< HEAD
             'http://localhost/brain-box/api/login.php'), 
+=======
+            'http://localhost/api/login.php'), // Substitua pelo endereço IP da sua máquina
+>>>>>>> 8ba72141911d160350fcbf3a74d0d9f3cacce3fb
         body: {
           'email': email,
           'senha': senha,
