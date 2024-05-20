@@ -2,58 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:brainbox/utils/routes.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'auth_manager.dart'; // Importe a classe AuthManager
 
 class Login extends StatelessWidget {
-  Future<void> _login(BuildContext context) async {
-    // Dados do login
-    String email = emailController.text;
-    String senha = senhaController.text;
-
-    try {
-      print("Enviando requisição para a API...");
-      var response = await http.post(
-        Uri.parse(
-            'http://localhost/api/login.php'), // Substitua pelo endereço IP da sua máquina
-        body: {
-          'email': email,
-          'senha': senha,
-        },
-      );
-      print("Resposta recebida: ${response.statusCode}");
-
-      if (response.statusCode == 200) {
-        var responseBody = jsonDecode(response.body);
-        if (responseBody['status'] == 'success') {
-          Navigator.of(context).pushNamed(Routes.caixinhahome);
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(responseBody['message']),
-            ),
-          );
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Erro ao fazer login: ${response.body}"),
-          ),
-        );
-      }
-    } catch (e) {
-      print("Erro ao fazer login: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Erro ao fazer login: $e"),
-        ),
-      );
-    }
-  }
-
-  TextEditingController emailController = TextEditingController();
-  TextEditingController senhaController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController senhaController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    checkLoggedInUser(context); // Verifica se o usuário já está logado
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -87,7 +46,6 @@ class Login extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    // Restante do código...
                   ),
                 ),
               ),
@@ -167,5 +125,70 @@ class Login extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void checkLoggedInUser(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    if (token != null) {
+      // Se o token estiver presente, o usuário está logado
+      bool isValid = await AuthManager.isTokenValid(token);
+      if (isValid) {
+        // Se o token for válido, direcione para a tela principal
+        Navigator.of(context).pushNamed(Routes.caixinhahome);
+      }
+    }
+  }
+
+  Future<void> _login(BuildContext context) async {
+    // Dados do login
+    String email = emailController.text;
+    String senha = senhaController.text;
+
+    try {
+      print("Enviando requisição para a API...");
+      var response = await http.post(
+        Uri.parse('http://localhost/brain-box/api/login.php'),
+        body: {
+          'email': email,
+          'senha': senha,
+        },
+      );
+      print("Resposta recebida: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        var responseBody = jsonDecode(response.body);
+        if (responseBody['status'] == 'success') {
+
+          // Salva o user_id e o token no SharedPreferences
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('user_id', responseBody['user_id'].toString());
+          await prefs.setString('token', responseBody['token']);
+          print('Token salvo: ${responseBody['token']}');
+
+          Navigator.of(context).pushNamed(Routes.caixinhahome);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(responseBody['message']),
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Erro ao fazer login: ${response.body}"),
+          ),
+        );
+      }
+    } catch (e) {
+      print("Erro ao fazer login: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Erro ao fazer login: $e"),
+        ),
+      );
+    }
   }
 }

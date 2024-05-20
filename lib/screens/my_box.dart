@@ -1,12 +1,16 @@
 import 'package:brainbox/screens/caixinha_home.dart';
 import 'package:brainbox/screens/myprofile.dart';
 import 'package:flutter/material.dart';
-import 'package:brainbox/screens/createbox.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:brainbox/utils/routes.dart';
+import 'auth_manager.dart';
 
 class MyBox extends StatefulWidget {
   final TextEditingController? controller;
 
-  MyBox({required this.controller});
+  MyBox({this.controller});
 
   @override
   _MyBoxState createState() => _MyBoxState();
@@ -14,6 +18,99 @@ class MyBox extends StatefulWidget {
 
 class _MyBoxState extends State<MyBox> {
   List<String> annotations = [];
+  String? caixinhaName;
+
+  
+
+  @override
+  void initState() {
+    super.initState();
+     _initialize();
+  }
+
+  Future<void> _initialize() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    if (token == null || !(await AuthManager.isTokenValid(token))) {
+      // Se o token não for válido ou não existir, redireciona para a tela de login
+      Navigator.pushReplacementNamed(context, Routes.login);
+    } else {
+      // Se o token for válido, continua a inicialização
+      await fetchCaixinhaName(token);
+      await retrieveLocalCaixinhaName();
+    }
+  }
+
+  Future<void> retrieveLocalCaixinhaName() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      caixinhaName = prefs.getString('nome_caixinha');
+    });
+  }
+
+  Future<void> sendDataToAPI(
+      String anotacao, String imagem, String documento, String links) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    
+    if (token == null) {
+      // Notificar o usuário sobre a falta de token
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro: usuário não autenticado')),
+      );
+      return;
+    }
+  
+    final response = await http.post(
+      Uri.parse('http://localhost/brain-box/api/mybox.php'),
+      headers: <String, String>{
+        'Authorization': 'Bearer $token',
+      },
+      body: {
+        'anotacao': anotacao,
+      },
+    );
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['status'] == 'success') {
+        // Faça o que for necessário após o envio bem-sucedido
+      } else {
+        // Lida com erros
+      }
+    } else {
+      // Lida com erros de conexão
+    }
+  }
+
+  Future<void> fetchCaixinhaName(String? token) async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://localhost/brain-box/api/mybox.php'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['status'] == 'success') {
+          setState(() {
+            caixinhaName = data['caixinha']['nome'];
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(data['message'])),
+          );
+        }
+        } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao carregar nome da caixinha')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +120,12 @@ class _MyBoxState extends State<MyBox> {
           backgroundColor: Color.fromRGBO(13, 71, 161, 1),
           iconTheme: IconThemeData(color: Colors.white),
           title: Text(
-            widget.controller?.text ?? 'MINHA CAIXINHA',
+            caixinhaName ?? 'MINHA CAIXINHA',
             style: TextStyle(color: Colors.white),
           ),
         ),
+
+        
         drawer: MyDrawer(), // Adiciona o Drawer
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,6 +166,7 @@ class MyButton extends StatefulWidget {
 class _MyButtonState extends State<MyButton> {
   bool _isMenuOpen = false;
   TextEditingController _textController = TextEditingController();
+  
 
   void _showMenu() {
     setState(() {
@@ -87,30 +187,7 @@ class _MyButtonState extends State<MyButton> {
                 _showPostItNote(context); // Show the post-it note
               },
             ),
-            ListTile(
-              leading: Icon(Icons.add),
-              title: Text('Imagem'),
-              onTap: () {
-                Navigator.pop(context); // Close the bottom sheet
-                _addImage(); // Handle adding image
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.add),
-              title: Text('Documento'),
-              onTap: () {
-                Navigator.pop(context); // Close the bottom sheet
-                _addDocument(); // Handle adding document
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.add),
-              title: Text('Links'),
-              onTap: () {
-                Navigator.pop(context); // Close the bottom sheet
-                _addLinks(); // Handle adding links
-              },
-            ),
+            
           ],
         );
       },
@@ -156,20 +233,6 @@ class _MyButtonState extends State<MyButton> {
     );
   }
 
-  void _addImage() {
-    // Handle adding image
-    print('Adicionar Imagem');
-  }
-
-  void _addDocument() {
-    // Handle adding document
-    print('Adicionar Documento');
-  }
-
-  void _addLinks() {
-    // Handle adding links
-    print('Adicionar Links');
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -197,27 +260,6 @@ class _MyButtonState extends State<MyButton> {
   }
 }
 
-class Mybox extends StatelessWidget {
-  const Mybox({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final String? boxName =
-        ModalRoute.of(context)?.settings.arguments as String?;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Sua caixinha'),
-      ),
-      body: Center(
-        child: Text(
-          'O nome da sua caixinha é: $boxName',
-          style: TextStyle(fontSize: 24),
-        ),
-      ),
-    );
-  }
-}
 
 class PostItAnnotation extends StatelessWidget {
   final String annotation;
@@ -241,6 +283,14 @@ class PostItAnnotation extends StatelessWidget {
 }
 
 class MyDrawer extends StatelessWidget {
+
+  // Método para realizar o logout
+  Future<void> _logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('user_id'); // Remove o user_id do SharedPreferences
+    prefs.remove('token'); // Remove o token do SharedPreferences
+    }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -258,13 +308,6 @@ class MyDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: Text('Página Inicial'),
-            leading: Icon(Icons.home), // Adiciona o ícone de casa
-            onTap: () {
-              // Implemente a ação desejada para 'Página Inicial'
-            },
-          ),
-          ListTile(
             title: Text('Minhas caixinhas'),
             leading: Icon(Icons.archive), // Ícone de caixa aberta
             onTap: () {
@@ -276,6 +319,13 @@ class MyDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+              title: Text('Criar Caixinha'),
+              leading: Icon(Icons.add_box), // Ícone de adicionar caixinha
+              onTap: () {
+                Navigator.pushNamed(context, Routes.createbox); // Rota para Createbox
+              },
+            ),
+          ListTile(
             title: Text('Meu perfil'),
             leading: Icon(Icons.person), // Ícone de perfil de usuário
             onTap: () {
@@ -286,6 +336,13 @@ class MyDrawer extends StatelessWidget {
                           Profile())); // Implemente a ação desejada para 'Meu perfil'
             },
           ),
+          ListTile(
+              title: Text('Sair'),
+              leading: Icon(Icons.logout), // Ícone de logout
+              onTap: () {
+                _logout(context); // Chama o método de logout ao pressionar "Sair"
+              },
+            ),
         ],
       ),
     );

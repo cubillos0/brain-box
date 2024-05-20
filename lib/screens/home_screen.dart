@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:brainbox/utils/routes.dart';
 import 'package:brainbox/screens/login.dart';
-import 'package:brainbox/screens/home_screen.dart';
+import 'package:brainbox/screens/caixinha_home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:brainbox/screens/auth_manager.dart'; // Importe a classe AuthManager
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -10,26 +12,45 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-// Abaixo está a substituição da tela de Get Started por uma tela de carregamento simples
-
 class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    // Inicia a contagem regressiva para a navegação para outra tela
+    // Inicia a verificação do token
     _navigateToNextScreen();
   }
 
-  // Função para navegar para outra tela após 3 segundos
-  void _navigateToNextScreen() {
-    Future.delayed(Duration(seconds: 3), () {
+  // Função para navegar para outra tela após verificar o token
+  void _navigateToNextScreen() async {
+    // Aguarda 3 segundos antes de verificar o token
+    await Future.delayed(Duration(seconds: 3));
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+
+    if (token != null) {
+      // Se o token estiver presente, verifica a validade
+      bool isValid = await AuthManager.isTokenValid(token);
+      if (isValid) {
+        // Se o token for válido, navegue para a tela principal
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => caixinha_home()), // Substitua HomeScreen pela tela principal do seu app
+        );
+      } else {
+        // Se o token não for válido, navegue para a tela de login
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Login()),
+        );
+      }
+    } else {
+      // Se não houver token, navegue para a tela de login
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-            builder: (context) =>
-                Login()), // Substitua LoginScreen() pela tela para a qual deseja navegar
+        MaterialPageRoute(builder: (context) => Login()),
       );
-    });
+    }
   }
 
   @override

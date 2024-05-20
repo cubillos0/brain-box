@@ -1,6 +1,9 @@
 import 'package:brainbox/screens/myprofile.dart';
 import 'package:brainbox/utils/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'auth_manager.dart'; // Importe a classe AuthManager
+import 'dart:convert';
 
 class caixinha_home extends StatefulWidget {
   const caixinha_home({Key? key}) : super(key: key);
@@ -12,6 +15,13 @@ class caixinha_home extends StatefulWidget {
 class CaixinhaHomeState extends State<caixinha_home> {
   void _showMenu() {
     // Implemente o que acontecerá quando o menu for mostrado
+  }
+
+  Future<void> _logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('user_id');
+    prefs.remove('token');
+    Navigator.of(context).pushNamed(Routes.login);
   }
 
   @override
@@ -42,23 +52,12 @@ class CaixinhaHomeState extends State<caixinha_home> {
                 height: 100,
               ),
             ),
+            
             ListTile(
-              title: Text('Página Inicial'),
-              leading: Icon(Icons.home), // Adiciona o ícone de casa
+              title: Text('Criar Caixinha'),
+              leading: Icon(Icons.add_box), // Ícone de adicionar caixinha
               onTap: () {
-                // Implemente a ação desejada para 'Página Inicial'
-              },
-            ),
-            ListTile(
-              title: Text('Minhas caixinhas'),
-              leading: Icon(Icons.archive), // Ícone de caixa aberta
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => caixinha_home(),
-                  ),
-                ); // Implemente a ação desejada para 'Minhas caixinhas'
+                Navigator.pushNamed(context, Routes.createbox); // Rota para Createbox
               },
             ),
             ListTile(
@@ -71,6 +70,13 @@ class CaixinhaHomeState extends State<caixinha_home> {
                     builder: (context) => Profile(),
                   ),
                 ); // Implemente a ação desejada para 'Meu perfil'
+              },
+            ),
+            ListTile(
+              title: Text('Sair'),
+              leading: Icon(Icons.logout), // Ícone de logout
+              onTap: () {
+                _logout(context); // Chama o método de logout ao pressionar "Sair"
               },
             ),
           ],
